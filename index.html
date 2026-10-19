@@ -1,0 +1,530 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AdiWorks</title>
+<meta name="description" content="AdiWorks builds custom AI chat bots for YouTube live streams - your language, your vibe, your rules. Free setup on your own Google account.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #06070b; --panel: #0e1017; --panel-2: #141722; --line: #222636;
+    --fg: #eceef5; --muted: #949ab0;
+    --violet: #8b5cff; --cyan: #2fe0ff; --pink: #ff4fa3; --green: #3ddc84; --amber: #ffb547; --red: #ff3b5c;
+    --radius: 16px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 Inter, system-ui, sans-serif;
+         -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+  body::before { content: ""; position: fixed; inset: -25% -15% auto; height: 85vh; z-index: -1; filter: blur(30px);
+    background:
+      radial-gradient(38% 50% at 18% 30%, rgba(139,92,255,.26), transparent 70%),
+      radial-gradient(34% 44% at 82% 18%, rgba(47,224,255,.16), transparent 70%),
+      radial-gradient(28% 40% at 55% 75%, rgba(255,79,163,.12), transparent 70%); }
+  a { color: var(--cyan); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  code { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: .88em; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
+
+  nav { position: sticky; top: 0; z-index: 10; backdrop-filter: blur(12px); background: rgba(6,7,11,.72); border-bottom: 1px solid var(--line); }
+  nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 62px; }
+  .brand { display: flex; align-items: center; gap: 10px; font: 700 19px "Space Grotesk", sans-serif; color: var(--fg); }
+  .brand:hover { text-decoration: none; }
+  .logo { width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; font-size: 17px;
+          background: conic-gradient(from 210deg, var(--violet), var(--cyan), var(--pink), var(--violet));
+          box-shadow: 0 0 24px rgba(139,92,255,.45); }
+  nav .links { display: flex; gap: 22px; align-items: center; font-size: 14px; }
+  nav .links a { color: var(--muted); }
+  nav .links a:hover { color: var(--fg); text-decoration: none; }
+  nav .links a.navcta { color: #0a0b10; background: var(--fg); padding: 7px 14px; border-radius: 10px; font-weight: 600; }
+
+  .hero { padding: 80px 0 30px; text-align: center; }
+  .pill { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px; border: 1px solid var(--line);
+          background: var(--panel); font-size: 13px; color: var(--muted); }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 12px var(--green); animation: pulse 1.8s infinite; }
+  @keyframes pulse { 50% { opacity: .35; } }
+  h1 { font: 700 clamp(38px, 7.2vw, 76px)/1.03 "Space Grotesk", sans-serif; margin: 22px auto 18px; letter-spacing: -.025em; max-width: 900px; }
+  .grad { background: linear-gradient(90deg, var(--cyan), var(--violet) 50%, var(--pink)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .lead { max-width: 660px; margin: 0 auto; color: var(--muted); font-size: clamp(16px, 2.2vw, 19px); }
+  .cta { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 30px; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 13px 22px; border-radius: 12px; font-weight: 600; font-size: 15px;
+         border: 1px solid var(--line); color: var(--fg); background: var(--panel); cursor: pointer; font-family: inherit; }
+  .btn:hover { text-decoration: none; border-color: #3a4057; }
+  .btn.primary { border: 0; color: #fff; background: linear-gradient(135deg, var(--violet), var(--pink)); box-shadow: 0 12px 34px -12px rgba(139,92,255,.7); }
+  .trust { margin-top: 26px; color: var(--muted); font-size: 14px; display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+  .trust span::before { content: "✓ "; color: var(--green); }
+
+  /* demo */
+  .demo { margin: 52px auto 0; max-width: 980px; display: grid; grid-template-columns: 1fr 1.1fr; border: 1px solid var(--line);
+          border-radius: 20px; overflow: hidden; background: var(--panel); text-align: left; box-shadow: 0 40px 120px -40px rgba(139,92,255,.4); }
+  .side { padding: 26px; background: linear-gradient(160deg, rgba(139,92,255,.12), transparent 60%); border-right: 1px solid var(--line);
+          display: flex; flex-direction: column; gap: 18px; }
+  .side h3 { margin: 0; font: 700 22px "Space Grotesk"; }
+  .side p { margin: 0; color: var(--muted); font-size: 14.5px; }
+  .persona { display: grid; gap: 8px; }
+  .persona button { text-align: left; display: flex; gap: 12px; align-items: center; padding: 12px 14px; border-radius: 12px;
+                    border: 1px solid var(--line); background: var(--panel-2); color: var(--fg); cursor: pointer; font: inherit; }
+  .persona button[aria-pressed="true"] { border-color: var(--violet); box-shadow: 0 0 0 3px rgba(139,92,255,.18); }
+  .persona b { display: block; font-size: 14.5px; }
+  .persona small { color: var(--muted); font-size: 12.5px; }
+  .persona .em { font-size: 22px; }
+  .chat { display: flex; flex-direction: column; min-height: 470px; max-height: 540px; }
+  .chat header { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; border-bottom: 1px solid var(--line); font-weight: 600; font-size: 14px; }
+  .live { font: 700 11px Inter; letter-spacing: .08em; background: var(--red); color: #fff; padding: 3px 8px; border-radius: 6px; }
+  .msgs { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+  .msg { display: flex; gap: 9px; align-items: flex-start; font-size: 13.5px; line-height: 1.45; animation: in .25s ease-out; }
+  @keyframes in { from { opacity: 0; transform: translateY(6px); } }
+  .av { flex: none; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-size: 11px; font-weight: 700; color: #0b0c10; }
+  .who { font-weight: 600; margin-right: 6px; }
+  .badge { font: 600 10px Inter; padding: 1px 6px; border-radius: 4px; margin-right: 6px; background: rgba(139,92,255,.2); color: #c7b2ff; }
+  .msg.bot .bubble { background: linear-gradient(135deg, rgba(139,92,255,.15), rgba(47,224,255,.08)); border: 1px solid rgba(139,92,255,.32);
+                     border-radius: 10px; padding: 6px 9px; margin-top: 2px; }
+  .msg.removed .text { color: var(--muted); font-style: italic; }
+  .msg.system { justify-content: center; font-size: 12px; color: var(--muted); }
+  .msg.system span { background: var(--panel-2); border: 1px solid var(--line); padding: 3px 10px; border-radius: 999px; }
+  .typing { display: inline-flex; gap: 3px; padding: 8px 10px; }
+  .typing b { width: 6px; height: 6px; border-radius: 50%; background: #c7b2ff; animation: blink 1s infinite; }
+  .typing b:nth-child(2) { animation-delay: .15s; } .typing b:nth-child(3) { animation-delay: .3s; }
+  @keyframes blink { 50% { opacity: .25; } }
+  .note { text-align: center; color: var(--muted); font-size: 13px; margin-top: 14px; }
+
+  section { padding: 92px 0 0; }
+  .eyebrow { font: 600 12px "JetBrains Mono"; letter-spacing: .14em; color: var(--cyan); text-transform: uppercase; }
+  h2 { font: 700 clamp(28px, 4.2vw, 44px)/1.12 "Space Grotesk"; margin: 8px 0 12px; letter-spacing: -.015em; }
+  .sec-lead { color: var(--muted); max-width: 640px; margin: 0 0 34px; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; transition: border-color .2s, transform .2s; }
+  .card:hover { border-color: #33394f; transform: translateY(-2px); }
+  .ic { width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; font-size: 20px; margin-bottom: 14px; }
+  .card h3 { margin: 0 0 6px; font: 700 18px "Space Grotesk"; }
+  .card p { margin: 0; color: var(--muted); font-size: 14.5px; }
+
+  .custom { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: center; }
+  .config { background: #0a0c12; border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; font: 500 13px/1.75 "JetBrains Mono", monospace; color: #b9bfd3; overflow-x: auto; }
+  .config .k { color: var(--cyan); } .config .s { color: #ffd28a; } .config .c { color: #5d647d; }
+  .ticks { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+  .ticks li { display: flex; gap: 12px; align-items: flex-start; }
+  .ticks li::before { content: "✦"; color: var(--violet); margin-top: 1px; }
+  .ticks b { display: block; }
+  .ticks span { color: var(--muted); font-size: 14.5px; }
+
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; counter-reset: s; }
+  .stepc { position: relative; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px 22px 22px; }
+  .stepc::before { counter-increment: s; content: "0" counter(s); font: 700 13px "JetBrains Mono"; color: var(--violet);
+                   display: inline-block; margin-bottom: 10px; padding: 3px 8px; border-radius: 6px; background: rgba(139,92,255,.14); }
+  .stepc h3 { margin: 0 0 6px; font: 700 19px "Space Grotesk"; }
+  .stepc p { margin: 0; color: var(--muted); font-size: 14.5px; }
+
+  .client { display: grid; grid-template-columns: 1.2fr 1fr; border: 1px solid var(--line); border-radius: 22px; overflow: hidden; background: var(--panel); }
+  .client .art { position: relative; min-height: 320px; overflow: hidden;
+    background: radial-gradient(55% 55% at 50% 115%, rgba(255,120,60,.45), transparent 70%),
+                radial-gradient(40% 40% at 25% 25%, rgba(139,92,255,.25), transparent 70%),
+                linear-gradient(180deg, #0b0d16, #160d16 60%, #1d0f12); }
+  .client .moon { position: absolute; top: 14%; right: 18%; width: 84px; height: 84px; border-radius: 50%;
+                  background: radial-gradient(circle at 35% 35%, #fff4d6, #e9c98a 60%, #b38a4c); box-shadow: 0 0 60px 10px rgba(255,220,150,.25); }
+  .client .tag { position: absolute; left: 18px; bottom: 18px; right: 18px; background: rgba(0,0,0,.55); backdrop-filter: blur(6px);
+                 border-radius: 12px; padding: 12px 14px; font-size: 13px; color: var(--muted); }
+  .client .tag b { color: var(--fg); font-family: "Space Grotesk"; font-size: 15px; display: block; }
+  .client .info { padding: 30px; display: flex; flex-direction: column; gap: 14px; justify-content: center; }
+  .client h3 { margin: 0; font: 700 26px "Space Grotesk"; }
+  .client p { margin: 0; color: var(--muted); }
+  .kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .kpi { background: var(--panel-2); border: 1px solid var(--line); border-radius: 12px; padding: 12px; text-align: center; }
+  .kpi b { display: block; font: 700 22px "Space Grotesk"; }
+  .kpi span { color: var(--muted); font-size: 12px; }
+  .client .links { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  .faq { display: grid; gap: 10px; max-width: 820px; }
+  details { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 4px 18px; }
+  summary { cursor: pointer; list-style: none; padding: 14px 0; font-weight: 600; display: flex; justify-content: space-between; gap: 12px; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; color: var(--muted); font-size: 20px; line-height: 1; }
+  details[open] summary::after { content: "–"; }
+  details p { margin: 0 0 16px; color: var(--muted); font-size: 15px; }
+
+  .contact { display: grid; grid-template-columns: 1fr 1.1fr; gap: 28px; align-items: start; }
+  form { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 22px; display: grid; gap: 12px; }
+  label { font-size: 13px; font-weight: 600; color: #c9cede; display: grid; gap: 6px; }
+  input, textarea, select { width: 100%; background: var(--panel-2); border: 1px solid var(--line); color: var(--fg); border-radius: 10px;
+                            padding: 11px 12px; font: inherit; font-size: 14.5px; outline: none; }
+  input:focus, textarea:focus, select:focus { border-color: var(--violet); box-shadow: 0 0 0 3px rgba(139,92,255,.18); }
+  textarea { min-height: 110px; resize: vertical; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .formmsg { font-size: 14px; min-height: 1.4em; }
+  .formmsg.ok { color: var(--green); } .formmsg.err { color: var(--red); }
+
+  footer { margin: 100px 0 0; padding: 30px 0 46px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; }
+  footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+
+  @media (max-width: 900px) {
+    .demo, .custom, .client, .contact { grid-template-columns: 1fr; }
+    .side { border-right: 0; border-bottom: 1px solid var(--line); }
+    .grid, .steps { grid-template-columns: 1fr 1fr; }
+    .client .art { min-height: 220px; }
+  }
+  @media (max-width: 620px) {
+    nav .links a:not(.navcta) { display: none; }
+    .grid, .steps, .row2 { grid-template-columns: 1fr; }
+    .kpis { grid-template-columns: 1fr 1fr 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="#"><span class="logo">⚡</span>AdiWorks</a>
+    <div class="links">
+      <a href="#demo">Demo</a>
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+      <a href="#client">Client</a>
+      <a class="navcta" href="#contact">Get your bot</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero wrap">
+  <span class="pill"><span class="dot"></span>Already running on a real YouTube channel</span>
+  <h1>Your stream deserves its <span class="grad">own AI chat bot</span></h1>
+  <p class="lead">AdiWorks builds custom AI bots for YouTube live streams — in your language, with your vibe,
+  knowing your regulars. It answers chat, keeps out spam and hype-mans your stream, 24/7.</p>
+  <div class="cta">
+    <a class="btn primary" href="#contact">Get your bot — free setup</a>
+    <a class="btn" href="#client">See it on Habok Gaming →</a>
+  </div>
+  <div class="trust"><span>Official YouTube API</span><span>Runs on your own Google account</span><span>$0/month on free tiers</span></div>
+
+  <div class="demo" id="demo">
+    <div class="side">
+      <div>
+        <h3>One bot, any personality</h3>
+        <p>Pick a vibe and watch the same chat get a different bot. Yours is set up around your channel.</p>
+      </div>
+      <div class="persona" id="persona">
+        <button aria-pressed="true" data-p="desi"><span class="em">🇮🇳</span><span><b>Desi gamer</b><small>Hinglish banter, roasts for friends</small></span></button>
+        <button aria-pressed="false" data-p="chill"><span class="em">🎧</span><span><b>Chill English</b><small>Friendly, helpful, a little witty</small></span></button>
+        <button aria-pressed="false" data-p="pro"><span class="em">🏆</span><span><b>Esports pro</b><small>Short, sharp, stats and tips</small></span></button>
+      </div>
+      <p style="font-size:13px">Scripted demo · names are made up · nothing is sent anywhere</p>
+    </div>
+    <div class="chat">
+      <header><span>Live chat · <span style="color:var(--muted);font-weight:500">demo channel</span></span><span class="live">● LIVE</span></header>
+      <div class="msgs" id="msgs" aria-live="polite"></div>
+    </div>
+  </div>
+</header>
+
+<section id="features">
+  <div class="wrap">
+    <div class="eyebrow">Features</div>
+    <h2>A mod, a hype-man and an editor in one</h2>
+    <p class="sec-lead">Everything runs on its own — from the moment you go live until the stream ends, and after.</p>
+    <div class="grid">
+      <div class="card"><div class="ic" style="background:rgba(139,92,255,.16)">💬</div><h3>AI chat buddy</h3>
+        <p>Viewers tag the bot and it answers in your language — game help, channel info, banter. It knows your regulars and inside jokes.</p></div>
+      <div class="card"><div class="ic" style="background:rgba(255,59,92,.15)">🛡️</div><h3>Auto moderation</h3>
+        <p>Scam links, abuse, caps and emoji floods removed instantly. Warnings before short timeouts — never permanent bans.</p></div>
+      <div class="card"><div class="ic" style="background:rgba(47,224,255,.14)">🎛️</div><h3>Modes for mods</h3>
+        <p>Your mods switch between friendly, roast and serious with one command. The bot never mocks you, whatever mode.</p></div>
+      <div class="card"><div class="ic" style="background:rgba(61,220,132,.15)">👋</div><h3>Welcomes & engagement</h3>
+        <p>Greets first-timers, welcomes back regulars, and drops jokes, game facts and questions when chat goes quiet.</p></div>
+      <div class="card"><div class="ic" style="background:rgba(255,181,71,.15)">🎬</div><h3>Shorts finder</h3>
+        <p>After each stream it spots chat reaction spikes, checks the recording, and sends you Shorts ideas with timestamps.</p></div>
+      <div class="card"><div class="ic" style="background:rgba(255,79,163,.15)">🚨</div><h3>Safety net</h3>
+        <p>Every reply is checked before it's posted, every stream is reviewed, and a behaviour exam runs weekly. You get pinged on Discord.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="custom">
+  <div class="wrap custom">
+    <div>
+      <div class="eyebrow">Made for your channel</div>
+      <h2>Not a generic bot. Yours.</h2>
+      <p class="sec-lead">Tell me about your channel and the bot is built around it.</p>
+      <ul class="ticks">
+        <li><span><b>Name & personality</b><span>Its name, tone, emojis and how hard it jokes.</span></span></li>
+        <li><span><b>Your language</b><span>English, Hindi, Hinglish, Urdu — or a mix like your chat.</span></span></li>
+        <li><span><b>Your people</b><span>Friends, mods and who's off-limits for jokes.</span></span></li>
+        <li><span><b>Your rules</b><span>Banned words, allowed links, how strict moderation is.</span></span></li>
+        <li><span><b>Your facts</b><span>Socials, schedule, PC specs, games — answered instantly with !commands.</span></span></li>
+      </ul>
+    </div>
+    <pre class="config" aria-label="Example channel settings"><span class="c"># channel.json — example</span>
+{
+  <span class="k">"bot_name"</span>: <span class="s">"NovaBot"</span>,
+  <span class="k">"language"</span>: <span class="s">"Hinglish"</span>,
+  <span class="k">"vibe"</span>: <span class="s">"chill gamer, light roasts"</span>,
+  <span class="k">"owner"</span>: <span class="s">"Nova"</span>,
+  <span class="k">"never_roast"</span>: [<span class="s">"Nova"</span>, <span class="s">"mods"</span>],
+  <span class="k">"friends"</span>: {
+    <span class="k">"Rex"</span>: <span class="s">"duo partner, roast his aim"</span>
+  },
+  <span class="k">"commands"</span>: {
+    <span class="k">"!specs"</span>: <span class="s">"RTX 3060, Ryzen 5 5600"</span>,
+    <span class="k">"!schedule"</span>: <span class="s">"Mon–Fri 9 PM"</span>
+  },
+  <span class="k">"banned_words"</span>: [<span class="s">"..."</span>]
+}</pre>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap">
+    <div class="eyebrow">How it works</div>
+    <h2>Live on your next stream</h2>
+    <p class="sec-lead">You keep full ownership — the bot runs in your own Google account, not mine.</p>
+    <div class="steps">
+      <div class="stepc"><h3>Tell me about your channel</h3><p>Fill in the form below. We chat about your vibe, language, regulars and rules.</p></div>
+      <div class="stepc"><h3>I set it up — free</h3><p>The bot is set up on your own free Google Cloud account and a bot YouTube channel you make a mod.</p></div>
+      <div class="stepc"><h3>Go live</h3><p>It joins your chat within about 2 minutes of going live — every stream, automatically.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="client">
+  <div class="wrap">
+    <div class="eyebrow">Client</div>
+    <h2>Check out my client</h2>
+    <p class="sec-lead">See the bot running for real, on a real channel.</p>
+    <div class="client">
+      <div class="art" aria-hidden="true"><div class="moon"></div>
+        <div class="tag"><b>HabokGamingBot</b>Bloodborne first playthrough · Hinglish / Urdu chat</div></div>
+      <div class="info">
+        <h3>🎮 Habok Gaming</h3>
+        <p>A YouTube gaming channel streaming souls-likes. HabokGamingBot answers chat in Hinglish, roasts friends
+        (only when mods turn roast mode on), moderates spam and abuse, and sends Shorts ideas after every stream.</p>
+        <div class="kpis">
+          <div class="kpi"><b>24/7</b><span>auto-joins streams</span></div>
+          <div class="kpi"><b>31</b><span>weekly safety tests</span></div>
+          <div class="kpi"><b>$0</b><span>monthly cost</span></div>
+        </div>
+        <div class="links">
+          <a class="btn primary" href="https://adik1999i.github.io/habokgamingbot-site/">Visit the bot's page</a>
+          <a class="btn" href="https://www.youtube.com/@HabokGaming">Watch Habok Gaming ↗</a>
+        </div>
+      </div>
+    </div>
+    <!-- Testimonial spot: add only after the person has agreed to be quoted. -->
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <div class="eyebrow">FAQ</div>
+    <h2>Questions</h2>
+    <div class="faq">
+      <details><summary>Is it really free?</summary>
+        <p>The setup is free. Running costs are $0 because the bot uses free tiers: one small Google Cloud server, the YouTube
+        Data API and Google's Gemini AI. Google needs a card on file to activate the free server, but stays at $0 within the free
+        limits, and I set a tiny budget alert so you'd hear about any charge.</p></details>
+      <details><summary>What do I need?</summary>
+        <p>A YouTube channel that streams, a Google account for the bot's server, and a second YouTube channel for the bot
+        itself that you make a moderator on your channel. Optional: a Discord server for reports and Shorts ideas.</p></details>
+      <details><summary>Is it safe for my channel?</summary>
+        <p>It uses only the official YouTube API — no scraping, no fake viewers. It can only delete messages and give short
+        timeouts (5 minutes max); it has no ban tool and can never act on you or your mods. Every AI reply is checked before posting.</p></details>
+      <details><summary>Which languages does it speak?</summary>
+        <p>Whatever your chat speaks — English, Hindi, Hinglish, Urdu, or a mix. The personality is written around your channel.</p></details>
+      <details><summary>Who owns the bot and the data?</summary>
+        <p>You do. Everything runs in your own Google account, and chat data stays there. You can switch it off any time.</p></details>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap contact">
+    <div>
+      <div class="eyebrow">Get your bot</div>
+      <h2>Want one for your stream?</h2>
+      <p class="sec-lead">Tell me about your channel. I'll reply by email — setup is free while I'm taking on the first channels.</p>
+      <ul class="ticks">
+        <li><span><b>No commitment</b><span>A quick chat first to see if it fits your stream.</span></span></li>
+        <li><span><b>Built around you</b><span>Your language, your people, your rules.</span></span></li>
+        <li><span><b>You own it</b><span>Runs on your account, at $0 a month.</span></span></li>
+      </ul>
+    </div>
+    <form id="lead" action="https://formspree.io/f/FORM_ID" method="POST">
+      <div class="row2">
+        <label>Your name<input name="name" required maxlength="80" autocomplete="name"></label>
+        <label>Email<input name="email" type="email" required maxlength="120" autocomplete="email"></label>
+      </div>
+      <label>YouTube channel link<input name="channel" type="url" required placeholder="https://youtube.com/@yourchannel" maxlength="200"></label>
+      <div class="row2">
+        <label>Chat language<select name="language"><option>English</option><option>Hinglish</option><option>Hindi</option><option>Urdu</option><option>Other / mix</option></select></label>
+        <label>Avg. live viewers<select name="viewers"><option>Under 10</option><option>10–50</option><option>50–200</option><option>200+</option></select></label>
+      </div>
+      <label>Anything else? (games, vibe, what you want the bot to do)<textarea name="message" maxlength="2000"></textarea></label>
+      <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off">
+      <button class="btn primary" type="submit">Send</button>
+      <div class="formmsg" id="formmsg" role="status"></div>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>⚡ AdiWorks · by DaBoss</span>
+    <span><a href="#contact">Get your bot</a> · <a href="https://adik1999i.github.io/habokgamingbot-site/">Client: HabokGamingBot</a></span>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const FORM_ID = "FORM_ID";          // replace with your Formspree form ID (e.g. "xyzabcd")
+  const CONTACT_EMAIL = "adityak1999i@gmail.com";
+
+  // ---------- persona demo ----------
+  const COLORS = ["#2fe0ff", "#ff9b6b", "#3ddc84", "#ffb547", "#ff7ab6", "#8fb4ff"];
+  const color = n => COLORS[[...n].reduce((a, c) => a + c.charCodeAt(0), 0) % COLORS.length];
+  const CHAT = [
+    { who: "@LunaFox", text: "first time here 👋" },
+    { who: "@KaiPlays", text: "@NovaBot what gpu does nova use?" },
+    { who: "@FreeGift99", text: "FREE SKINS at skins-free.xyz 🤑", spam: true },
+    { who: "@Rex", text: "@NovaBot roast me, I died to the tutorial boss 💀" },
+    { who: "@KaiPlays", text: "@NovaBot now roast nova 😈" },
+    { who: "@LunaFox", text: "@NovaBot any tips for this boss?" },
+  ];
+  const REPLIES = {
+    desi: [
+      "Welcome @LunaFox! 🎮 Pehli baar? Aaram se baitho, maza aayega 🔥",
+      "@KaiPlays RTX 3060 + Ryzen 5 5600 — budget beast, smooth chal raha hai 💪",
+      null,
+      "@Rex Tutorial boss se haar gaye? Bhai woh toh demo tha 😂 Aim practice ka DLC le lo 💀",
+      "@KaiPlays Nahi bhai, Nova apna main streamer hai — sirf hype milegi! 😎",
+      "@LunaFox Pattern dekho, 2 hits ke baad dodge karo, phir punish! Aggression = win 🔥",
+    ],
+    chill: [
+      "Hey @LunaFox, welcome in! Grab a snack and enjoy the stream 🎧",
+      "@KaiPlays Nova's running an RTX 3060 with a Ryzen 5 5600 — handles this game nicely.",
+      null,
+      "@Rex Lost to the tutorial boss? Respect for the honesty. The boss does not respect you, though 😅",
+      "@KaiPlays I'll pass — roasting the streamer is above my pay grade. Nova's doing great!",
+      "@LunaFox Watch for the wind-up on the big swing, dodge late, then get two hits in. Patience wins this one.",
+    ],
+    pro: [
+      "Welcome @LunaFox. GLHF 🏆",
+      "@KaiPlays RTX 3060 / R5 5600. Stable frames.",
+      null,
+      "@Rex Tutorial boss: 0 wins. Diagnosis: panic rolling. Fix: roll later. 📉",
+      "@KaiPlays Negative. Streamer is protected. Focus on your own K/D. 🎯",
+      "@LunaFox 3-hit combo, then 1.5s opening. Dodge into it, punish twice, reset. 📊",
+    ],
+  };
+  const $msgs = document.getElementById("msgs");
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  let persona = "desi", runId = 0;
+
+  function add(who, text, { bot = false, cls = "" } = {}) {
+    const el = document.createElement("div");
+    el.className = "msg " + cls + (bot ? " bot" : "");
+    const av = document.createElement("div");
+    av.className = "av";
+    av.style.background = bot ? "linear-gradient(135deg,#8b5cff,#2fe0ff)" : color(who);
+    av.textContent = bot ? "🤖" : who.replace("@", "")[0].toUpperCase();
+    const body = document.createElement("div");
+    const n = document.createElement("span");
+    n.className = "who";
+    n.style.color = bot ? "#c7b2ff" : color(who);
+    n.textContent = who;
+    body.appendChild(n);
+    if (bot) { const b = document.createElement("span"); b.className = "badge"; b.textContent = "BOT · MOD"; body.appendChild(b); }
+    const t = document.createElement(bot ? "div" : "span");
+    t.className = bot ? "bubble text" : "text";
+    t.textContent = text;
+    body.appendChild(t);
+    el.append(av, body);
+    $msgs.appendChild(el);
+    while ($msgs.children.length > 40) $msgs.firstChild.remove();
+    $msgs.scrollTop = $msgs.scrollHeight;
+    return el;
+  }
+  function system(text) {
+    const el = document.createElement("div");
+    el.className = "msg system";
+    const s = document.createElement("span");
+    s.textContent = text;
+    el.appendChild(s);
+    $msgs.appendChild(el);
+    $msgs.scrollTop = $msgs.scrollHeight;
+  }
+  async function typing(ms) {
+    const el = document.createElement("div");
+    el.className = "msg bot";
+    el.innerHTML = '<div class="av" style="background:linear-gradient(135deg,#8b5cff,#2fe0ff)">🤖</div><div class="typing"><b></b><b></b><b></b></div>';
+    $msgs.appendChild(el);
+    $msgs.scrollTop = $msgs.scrollHeight;
+    await sleep(ms);
+    el.remove();
+  }
+  async function play(id) {
+    for (;;) {
+      for (let i = 0; i < CHAT.length; i++) {
+        if (id !== runId) return;
+        const m = CHAT[i];
+        const el = add(m.who, m.text);
+        await sleep(900);
+        if (id !== runId) return;
+        if (m.spam) {
+          el.classList.add("removed");
+          el.querySelector(".text").textContent = "[message removed by NovaBot · scam link]";
+        } else {
+          await typing(1100);
+          if (id !== runId) return;
+          add("NovaBot", REPLIES[persona][i], { bot: true });
+        }
+        await sleep(1800 + Math.random() * 900);
+      }
+      await sleep(2500);
+    }
+  }
+  function start(p) {
+    persona = p;
+    runId++;
+    $msgs.innerHTML = "";
+    system({ desi: "Persona: Desi gamer 🇮🇳", chill: "Persona: Chill English 🎧", pro: "Persona: Esports pro 🏆" }[p]);
+    play(runId);
+  }
+  document.getElementById("persona").addEventListener("click", e => {
+    const b = e.target.closest("button[data-p]");
+    if (!b) return;
+    document.querySelectorAll("#persona button").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+    start(b.dataset.p);
+  });
+  start("desi");
+
+  // ---------- contact form ----------
+  const form = document.getElementById("lead");
+  const msg = document.getElementById("formmsg");
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
+    const data = new FormData(form);
+    if (data.get("_gotcha")) return;              // bot trap
+    if (FORM_ID === "FORM_ID") {                  // no Formspree yet: open an email instead
+      const body = [...data.entries()].filter(([k]) => k !== "_gotcha").map(([k, v]) => `${k}: ${v}`).join("\n");
+      location.href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("AdiWorks bot request")}&body=${encodeURIComponent(body)}`;
+      return;
+    }
+    msg.className = "formmsg"; msg.textContent = "Sending…";
+    try {
+      const r = await fetch(`https://formspree.io/f/${FORM_ID}`, { method: "POST", body: data, headers: { Accept: "application/json" } });
+      if (!r.ok) throw new Error(r.status);
+      form.reset();
+      msg.className = "formmsg ok"; msg.textContent = "Thanks! I'll get back to you by email soon. ⚡";
+    } catch {
+      msg.className = "formmsg err";
+      msg.textContent = `Couldn't send — please email ${CONTACT_EMAIL} instead.`;
+    }
+  });
+})();
+</script>
+</body>
+</html>
